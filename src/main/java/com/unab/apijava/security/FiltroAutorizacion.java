@@ -28,7 +28,31 @@ public class FiltroAutorizacion extends BasicAuthenticationFilter{
 
             String header = request.getHeader(ConstantesSecurity.HEADER_STRING);
 
-            if(header==null )
+            if(header==null || !header.startsWith(ConstantesSecurity.TOKEN_PREFIX)){
+                chain.doFilter(request, response);
+                return;
+            }
+
+            UsernamePasswordAuthenticationToken authenticationToken = getAuthenticationToken(request, header);
+
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+            chain.doFilter(request, response);
+        }
+
+        private UsernamePasswordAuthenticationToken getAuthenticationToken(HttpServletRequest request, String header){
+
+            if(header != null){
+                String token= header.replace(ConstantesSecurity.TOKEN_PREFIX, "");
+
+                String user=Jwts.parser()
+                    .setSigningKey(ConstantesSecurity.TOKEN_SECRET).parseClaimsJws(token).getBody().getSubject();
+
+                if(user != null){
+                    return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+                }
+            }
+            return null;
         }
 }
 

@@ -63,5 +63,19 @@ public class UsuarioService  implements IUsuarioService  {
         return new User(usuarioEntity.getUserName(), usuarioEntity.getEncryptedPassword(), new ArrayList<>());
     }
 
+    @Override
+    public UsuarioDto obtenerUsuario(String userName){
+
+        UsuarioEntity usuarioEntity= iUsuarioRepositorio.findByUserName(userName);
+
+        if(usuarioEntity==null){
+            throw new UsernameNotFoundException(userName);
+        }
+
+        UsuarioDto usuarioDtoObtenido= modelmapper.map(usuarioEntity, UsuarioDto.class);
+
+        return usuarioDtoObtenido;
+    }
+
 }
 

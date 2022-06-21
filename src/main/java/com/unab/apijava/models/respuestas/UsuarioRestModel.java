@@ -1,11 +1,14 @@
 package com.unab.apijava.models.respuestas;
 
+import java.util.List;
+
 public class UsuarioRestModel {
     
     private String userId;
     private String nombre;
     private String correo;
     private String userName;
+    private List<PartidosRestModel> partidosRestModel;
 
     public String getUserId() {
         return this.userId;

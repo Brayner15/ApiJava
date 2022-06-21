@@ -5,14 +5,15 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import javax.servlet.FilterChain;
-import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unab.apijava.models.peticiones.UsuarioLoginRequetsModel;
-
+import com.unab.apijava.services.IUsuarioService;
+import com.unab.apijava.shared.UsuarioDto;
+import com.unab.apijava.utils.AppContexto;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,6 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+
 
 public class FiltroAutenticacion extends UsernamePasswordAuthenticationFilter{
 
@@ -64,6 +66,12 @@ public class FiltroAutenticacion extends UsernamePasswordAuthenticationFilter{
             .signWith(SignatureAlgorithm.HS512, ConstantesSecurity.TOKEN_SECRET)
             .compact();
 
+            IUsuarioService iUsuarioServicio= (IUsuarioService) AppContexto.getBean("usuarioService");
+            UsuarioDto usuarioDto= iUsuarioServicio.obtenerUsuario(userName);
+
+
+            response.addHeader("Access-Control-Expose-Headers", "Authorization, UserId");
+            response.addHeader("UserId", usuarioDto.getUserid());
             response.addHeader(ConstantesSecurity.HEADER_STRING, ConstantesSecurity.TOKEN_PREFIX + token);
             
         }

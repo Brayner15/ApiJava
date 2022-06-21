@@ -1,13 +1,25 @@
 package com.unab.apijava.data.entidades;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import antlr.collections.List;
 
 @Entity(name = "usuarios")
+@Table(indexes = {
+    @Index(columnList = "userId", name = "index_userid", unique = true),
+    @Index(columnList = "userName", name = "index_username", unique = true),
+    @Index(columnList = "correo", name = "index_correo", unique = true),
+})
 public class UsuarioEntity  implements Serializable{
 
     private static final long serialVersionUID = 1L;
@@ -32,6 +44,9 @@ public class UsuarioEntity  implements Serializable{
 
     @Column(nullable = false)
     private String encryptedPassword;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy ="usuarioEntity")
+    private List<PartidoEntity> partidoEntityList= new ArrayList<>();
     
     public long getId() {
         return id;
